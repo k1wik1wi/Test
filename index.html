@@ -14,123 +14,521 @@
         body {
             background: #f5f5f5;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
+            padding: 16px;
         }
         
-        .container {
-            text-align: center;
-            width: 100%;
+        .header {
+            background: white;
+            border-radius: 16px;
             padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center;
         }
         
-        .menu-button {
-            background: #2481cc;
+        .balance {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2481cc;
+            margin: 10px 0;
+        }
+        
+        .balance-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .menu-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .menu-item:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .menu-title {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .bonus-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .bonus-icon {
+            font-size: 64px;
+            margin: 20px;
+        }
+        
+        .bonus-amount {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2481cc;
+            margin: 20px 0;
+        }
+        
+        .bonus-button {
+            background: #4CAF50;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            font-weight: 500;
-            border-radius: 12px;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s, background 0.2s;
-            margin-bottom: 30px;
+            width: 100%;
+            margin: 20px 0;
+            transition: background 0.2s;
         }
         
-        .menu-button:hover {
-            background: #1a6cb0;
-            transform: scale(1.02);
-        }
-        
-        .menu-button:active {
+        .bonus-button:active {
             transform: scale(0.98);
         }
         
-        .white-square {
-            width: 250px;
-            height: 250px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            margin: 0 auto;
-            display: none;
-            border: 2px solid #e0e0e0;
-            transition: all 0.3s ease;
+        .bonus-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
         
-        .white-square.visible {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        .debug-info {
-            margin-top: 20px;
+        .back-button {
+            background: #f5f5f5;
             color: #666;
-            font-size: 12px;
-            padding: 10px;
-            background: #fff;
-            border-radius: 8px;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2481cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
             display: none;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <button class="menu-button" id="menuBtn">Показать меню</button>
-        <div class="white-square" id="whiteSquare"></div>
-        
-        <!-- Скрытый div для отладки -->
-        <div class="debug-info" id="debug">
-            Версия: 2.0 | Статус: загружено
+    <div id="app">
+        <!-- Экран загрузки -->
+        <div id="loadingScreen" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Загрузка...</p>
+        </div>
+
+        <!-- Главное меню -->
+        <div id="mainMenu" class="hidden">
+            <div class="header">
+                <div class="balance-label">Ваш баланс</div>
+                <div class="balance" id="balanceDisplay">0</div>
+            </div>
+            
+            <div class="menu-grid">
+                <div class="menu-item" onclick="showBonus()">
+                    <div class="menu-icon">🎁</div>
+                    <div class="menu-title">Бонус</div>
+                </div>
+                <div class="menu-item" onclick="showGames()">
+                    <div class="menu-icon">🎮</div>
+                    <div class="menu-title">Игры</div>
+                </div>
+                <div class="menu-item" onclick="showSettings()">
+                    <div class="menu-icon">⚙️</div>
+                    <div class="menu-title">Настройки</div>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <div class="stat-row">
+                    <span class="stat-label">Ваш ID:</span>
+                    <span class="stat-value" id="userId">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Никнейм:</span>
+                    <span class="stat-value" id="username">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран бонуса -->
+        <div id="bonusScreen" class="hidden">
+            <div class="header">
+                <div class="balance-label">Ваш баланс</div>
+                <div class="balance" id="bonusBalanceDisplay">0</div>
+            </div>
+
+            <div class="bonus-card">
+                <div class="bonus-icon">🎁</div>
+                <h2>Ежедневный бонус</h2>
+                <div class="bonus-amount" id="bonusAmount">-</div>
+                
+                <div id="bonusMessage" class="message info hidden"></div>
+                
+                <button class="bonus-button" id="claimBonusBtn" onclick="claimBonus()">
+                    Забрать бонус
+                </button>
+                
+                <div id="nextBonusTime" class="stat-row">
+                    <span class="stat-label">Следующий бонус:</span>
+                    <span class="stat-value" id="nextBonusDate">-</span>
+                </div>
+            </div>
+
+            <button class="back-button" onclick="showMainMenu()">← Назад в меню</button>
+        </div>
+
+        <!-- Экран игр -->
+        <div id="gamesScreen" class="hidden">
+            <div class="header">
+                <div class="balance-label">Ваш баланс</div>
+                <div class="balance" id="gamesBalanceDisplay">0</div>
+            </div>
+
+            <div class="stats-card" style="text-align: center; padding: 40px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">🎮</div>
+                <h3>Игры в разработке</h3>
+                <p style="color: #666; margin-top: 10px;">Скоро здесь появятся игры</p>
+            </div>
+
+            <button class="back-button" onclick="showMainMenu()">← Назад в меню</button>
+        </div>
+
+        <!-- Экран настроек -->
+        <div id="settingsScreen" class="hidden">
+            <div class="header">
+                <div class="balance-label">Ваш баланс</div>
+                <div class="balance" id="settingsBalanceDisplay">0</div>
+            </div>
+
+            <div class="stats-card">
+                <div class="stat-row">
+                    <span class="stat-label">Telegram ID:</span>
+                    <span class="stat-value" id="settingsTelegramId">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Никнейм:</span>
+                    <span class="stat-value" id="settingsUsername">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Дата регистрации:</span>
+                    <span class="stat-value" id="settingsJoinDate">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Сыграно игр:</span>
+                    <span class="stat-value" id="gamesPlayed">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Всего заработано:</span>
+                    <span class="stat-value" id="totalEarned">0</span>
+                </div>
+            </div>
+
+            <button class="back-button" onclick="showMainMenu()">← Назад в меню</button>
         </div>
     </div>
 
     <script>
-        // Принудительно отключаем старые обработчики
+        // Инициализация Telegram
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // Данные пользователя
+        let userData = null;
+        let balance = 0;
+
+        // При загрузке страницы
         window.onload = function() {
-            // Инициализация Telegram
-            const tg = window.Telegram.WebApp;
-            tg.expand();
-            tg.ready();
-            
-            // Получаем элементы
-            const menuBtn = document.getElementById('menuBtn');
-            const square = document.getElementById('whiteSquare');
-            
-            // Удаляем все старые обработчики (если были)
-            menuBtn.replaceWith(menuBtn.cloneNode(true));
-            
-            // Получаем новые элементы после замены
-            const newMenuBtn = document.getElementById('menuBtn');
-            const newSquare = document.getElementById('whiteSquare');
-            
-            // Назначаем новый обработчик
-            newMenuBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('Кнопка нажата!');
-                
-                // Переключаем квадрат
-                if (newSquare.classList.contains('visible')) {
-                    newSquare.classList.remove('visible');
-                    newMenuBtn.textContent = 'Показать меню';
-                } else {
-                    newSquare.classList.add('visible');
-                    newMenuBtn.textContent = 'Скрыть меню';
-                }
-            });
-            
-            // Проверяем, что скрипт работает
-            console.log('Скрипт загружен и работает!');
-            document.getElementById('debug').style.display = 'block';
+            loadUserData();
         };
+
+        // Загрузка данных пользователя
+        function loadUserData() {
+            try {
+                const user = tg.initDataUnsafe?.user;
+                if (!user) {
+                    showError('Пожалуйста, нажмите "Разрешить" в Telegram');
+                    return;
+                }
+
+                userData = user;
+                
+                // Запрашиваем данные у бота
+                tg.sendData(JSON.stringify({
+                    action: 'get_user_data',
+                    user_id: user.id
+                }));
+
+                // Показываем главное меню через 1 секунду
+                setTimeout(() => {
+                    showMainMenu();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Ошибка загрузки данных');
+            }
+        }
+
+        // Обновление баланса
+        function updateBalanceDisplay(newBalance) {
+            balance = newBalance;
+            document.getElementById('balanceDisplay').textContent = balance;
+            document.getElementById('bonusBalanceDisplay').textContent = balance;
+            document.getElementById('gamesBalanceDisplay').textContent = balance;
+            document.getElementById('settingsBalanceDisplay').textContent = balance;
+        }
+
+        // Показать главное меню
+        function showMainMenu() {
+            hideAllScreens();
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('mainMenu').classList.remove('hidden');
+            
+            if (userData) {
+                document.getElementById('userId').textContent = userData.id || '-';
+                document.getElementById('username').textContent = '@' + (userData.username || 'не установлен');
+            }
+        }
+
+        // Показать экран бонуса
+        function showBonus() {
+            hideAllScreens();
+            document.getElementById('bonusScreen').classList.remove('hidden');
+            
+            document.getElementById('bonusAmount').textContent = 'Загрузка...';
+            document.getElementById('claimBonusBtn').disabled = true;
+            
+            tg.sendData(JSON.stringify({
+                action: 'check_bonus',
+                user_id: userData.id
+            }));
+        }
+
+        // Показать экран игр
+        function showGames() {
+            hideAllScreens();
+            document.getElementById('gamesScreen').classList.remove('hidden');
+        }
+
+        // Показать экран настроек
+        function showSettings() {
+            hideAllScreens();
+            document.getElementById('settingsScreen').classList.remove('hidden');
+            
+            if (userData) {
+                document.getElementById('settingsTelegramId').textContent = userData.id || '-';
+                document.getElementById('settingsUsername').textContent = '@' + (userData.username || 'не установлен');
+                document.getElementById('settingsJoinDate').textContent = new Date().toLocaleDateString('ru-RU');
+            }
+        }
+
+        // Забрать бонус
+        function claimBonus() {
+            const btn = document.getElementById('claimBonusBtn');
+            btn.disabled = true;
+            btn.textContent = 'Загрузка...';
+            
+            tg.sendData(JSON.stringify({
+                action: 'claim_bonus',
+                user_id: userData.id
+            }));
+        }
+
+        // Обновить информацию о бонусе
+        function updateBonusInfo(info) {
+            if (info.canClaim) {
+                document.getElementById('bonusAmount').textContent = info.amount + ' коинов';
+                document.getElementById('claimBonusBtn').disabled = false;
+                document.getElementById('claimBonusBtn').textContent = 'Забрать бонус';
+                document.getElementById('bonusMessage').classList.add('hidden');
+                document.getElementById('nextBonusDate').textContent = 'Сегодня';
+            } else {
+                document.getElementById('bonusAmount').textContent = 'Уже получен';
+                document.getElementById('claimBonusBtn').disabled = true;
+                document.getElementById('claimBonusBtn').textContent = 'Бонус уже получен';
+                document.getElementById('nextBonusDate').textContent = info.nextBonusDate || 'Завтра';
+                
+                const msgDiv = document.getElementById('bonusMessage');
+                msgDiv.classList.remove('hidden');
+                msgDiv.classList.add('info');
+                msgDiv.textContent = `Вы уже получали бонус сегодня. Следующий бонус ${info.nextBonusDate}`;
+            }
+        }
+
+        // Показать ошибку
+        function showError(message) {
+            hideAllScreens();
+            const errorDiv = document.createElement('div');
+            errorDiv.style.position = 'fixed';
+            errorDiv.style.top = '50%';
+            errorDiv.style.left = '50%';
+            errorDiv.style.transform = 'translate(-50%, -50%)';
+            errorDiv.style.padding = '20px';
+            errorDiv.style.background = '#f8d7da';
+            errorDiv.style.color = '#721c24';
+            errorDiv.style.borderRadius = '12px';
+            errorDiv.style.textAlign = 'center';
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+        }
+
+        // Скрыть все экраны
+        function hideAllScreens() {
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('bonusScreen').classList.add('hidden');
+            document.getElementById('gamesScreen').classList.add('hidden');
+            document.getElementById('settingsScreen').classList.add('hidden');
+        }
+
+        // Обработка данных от бота
+        tg.onEvent('sendData', function(data) {
+            try {
+                const response = JSON.parse(data);
+                console.log('Response:', response);
+                
+                if (response.action === 'user_data') {
+                    updateBalanceDisplay(response.balance);
+                    if (response.games_played) {
+                        document.getElementById('gamesPlayed').textContent = response.games_played;
+                    }
+                    if (response.total_earned) {
+                        document.getElementById('totalEarned').textContent = response.total_earned;
+                    }
+                }
+                else if (response.action === 'bonus_info') {
+                    updateBonusInfo(response.data);
+                }
+                else if (response.action === 'bonus_claimed') {
+                    updateBalanceDisplay(response.new_balance);
+                    
+                    const msgDiv = document.getElementById('bonusMessage');
+                    msgDiv.classList.remove('hidden');
+                    msgDiv.classList.add('success');
+                    msgDiv.textContent = `🎉 Вы получили ${response.amount} коинов!`;
+                    
+                    updateBonusInfo({
+                        canClaim: false,
+                        nextBonusDate: 'завтра'
+                    });
+                }
+                else if (response.action === 'bonus_error') {
+                    const msgDiv = document.getElementById('bonusMessage');
+                    msgDiv.classList.remove('hidden');
+                    msgDiv.classList.add('error');
+                    msgDiv.textContent = response.message;
+                }
+            } catch (e) {
+                console.error('Error parsing response:', e);
+            }
+        });
+
+        // Таймаут на случай если бот не отвечает
+        setTimeout(() => {
+            if (document.getElementById('loadingScreen').classList.contains('hidden') === false) {
+                showMainMenu();
+                updateBalanceDisplay(10000);
+                document.getElementById('gamesPlayed').textContent = '0';
+                document.getElementById('totalEarned').textContent = '0';
+            }
+        }, 3000);
     </script>
 </body>
 </html>
