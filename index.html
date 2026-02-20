@@ -87,13 +87,6 @@
             margin: 20px;
         }
         
-        .bonus-amount {
-            font-size: 48px;
-            font-weight: bold;
-            color: #2481cc;
-            margin: 20px 0;
-        }
-        
         .bonus-button {
             background: #4CAF50;
             color: white;
@@ -209,7 +202,7 @@
         <!-- Экран загрузки -->
         <div id="loadingScreen" class="loading">
             <div class="loading-spinner"></div>
-            <p>Загрузка...</p>
+            <p>Загрузка данных...</p>
         </div>
 
         <!-- Главное меню -->
@@ -233,17 +226,6 @@
                     <div class="menu-title">Настройки</div>
                 </div>
             </div>
-
-            <div class="stats-card">
-                <div class="stat-row">
-                    <span class="stat-label">Ваш ID:</span>
-                    <span class="stat-value" id="userId">-</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">Никнейм:</span>
-                    <span class="stat-value" id="username">-</span>
-                </div>
-            </div>
         </div>
 
         <!-- Экран бонуса -->
@@ -256,7 +238,6 @@
             <div class="bonus-card">
                 <div class="bonus-icon">🎁</div>
                 <h2>Ежедневный бонус</h2>
-                <div class="bonus-amount" id="bonusAmount">-</div>
                 
                 <div id="bonusMessage" class="message info hidden"></div>
                 
@@ -265,8 +246,8 @@
                 </button>
                 
                 <div id="nextBonusTime" class="stat-row">
-                    <span class="stat-label">Следующий бонус:</span>
-                    <span class="stat-value" id="nextBonusDate">-</span>
+                    <span class="stat-label">Статус:</span>
+                    <span class="stat-value" id="bonusStatus">Проверка...</span>
                 </div>
             </div>
 
@@ -298,24 +279,24 @@
 
             <div class="stats-card">
                 <div class="stat-row">
-                    <span class="stat-label">Telegram ID:</span>
-                    <span class="stat-value" id="settingsTelegramId">-</span>
+                    <span class="stat-label">Ваш ID в системе:</span>
+                    <span class="stat-value" id="userSystemId">-</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">Никнейм:</span>
-                    <span class="stat-value" id="settingsUsername">-</span>
+                    <span class="stat-value" id="userUsername">-</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">Дата регистрации:</span>
-                    <span class="stat-value" id="settingsJoinDate">-</span>
+                    <span class="stat-value" id="userJoinDate">-</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">Сыграно игр:</span>
-                    <span class="stat-value" id="gamesPlayed">0</span>
+                    <span class="stat-value" id="userGamesPlayed">0</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">Всего заработано:</span>
-                    <span class="stat-value" id="totalEarned">0</span>
+                    <span class="stat-value" id="userTotalEarned">0</span>
                 </div>
             </div>
 
@@ -332,13 +313,14 @@
         // Данные пользователя
         let userData = null;
         let balance = 0;
+        let systemId = '';
 
         // При загрузке страницы
         window.onload = function() {
             loadUserData();
         };
 
-        // Загрузка данных пользователя
+        // Загрузка данных пользователя из бота
         function loadUserData() {
             try {
                 const user = tg.initDataUnsafe?.user;
@@ -355,10 +337,12 @@
                     user_id: user.id
                 }));
 
-                // Показываем главное меню через 1 секунду
+                // Таймаут на случай если бот не отвечает
                 setTimeout(() => {
-                    showMainMenu();
-                }, 1000);
+                    if (document.getElementById('loadingScreen').classList.contains('hidden') === false) {
+                        showMainMenu();
+                    }
+                }, 3000);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -366,7 +350,7 @@
             }
         }
 
-        // Обновление баланса
+        // Обновление баланса на всех экранах
         function updateBalanceDisplay(newBalance) {
             balance = newBalance;
             document.getElementById('balanceDisplay').textContent = balance;
@@ -380,11 +364,6 @@
             hideAllScreens();
             document.getElementById('loadingScreen').classList.add('hidden');
             document.getElementById('mainMenu').classList.remove('hidden');
-            
-            if (userData) {
-                document.getElementById('userId').textContent = userData.id || '-';
-                document.getElementById('username').textContent = '@' + (userData.username || 'не установлен');
-            }
         }
 
         // Показать экран бонуса
@@ -392,8 +371,8 @@
             hideAllScreens();
             document.getElementById('bonusScreen').classList.remove('hidden');
             
-            document.getElementById('bonusAmount').textContent = 'Загрузка...';
             document.getElementById('claimBonusBtn').disabled = true;
+            document.getElementById('bonusStatus').textContent = 'Проверка...';
             
             tg.sendData(JSON.stringify({
                 action: 'check_bonus',
@@ -411,12 +390,6 @@
         function showSettings() {
             hideAllScreens();
             document.getElementById('settingsScreen').classList.remove('hidden');
-            
-            if (userData) {
-                document.getElementById('settingsTelegramId').textContent = userData.id || '-';
-                document.getElementById('settingsUsername').textContent = '@' + (userData.username || 'не установлен');
-                document.getElementById('settingsJoinDate').textContent = new Date().toLocaleDateString('ru-RU');
-            }
         }
 
         // Забрать бонус
@@ -432,23 +405,49 @@
         }
 
         // Обновить информацию о бонусе
-        function updateBonusInfo(info) {
-            if (info.canClaim) {
-                document.getElementById('bonusAmount').textContent = info.amount + ' коинов';
-                document.getElementById('claimBonusBtn').disabled = false;
-                document.getElementById('claimBonusBtn').textContent = 'Забрать бонус';
+        function updateBonusInfo(canClaim) {
+            const btn = document.getElementById('claimBonusBtn');
+            const status = document.getElementById('bonusStatus');
+            
+            if (canClaim) {
+                btn.disabled = false;
+                btn.textContent = 'Забрать бонус';
+                status.textContent = 'Доступен';
+                status.style.color = '#4CAF50';
                 document.getElementById('bonusMessage').classList.add('hidden');
-                document.getElementById('nextBonusDate').textContent = 'Сегодня';
             } else {
-                document.getElementById('bonusAmount').textContent = 'Уже получен';
-                document.getElementById('claimBonusBtn').disabled = true;
-                document.getElementById('claimBonusBtn').textContent = 'Бонус уже получен';
-                document.getElementById('nextBonusDate').textContent = info.nextBonusDate || 'Завтра';
+                btn.disabled = true;
+                btn.textContent = 'Бонус уже получен';
+                status.textContent = 'Уже получен сегодня';
+                status.style.color = '#ff4444';
                 
                 const msgDiv = document.getElementById('bonusMessage');
                 msgDiv.classList.remove('hidden');
                 msgDiv.classList.add('info');
-                msgDiv.textContent = `Вы уже получали бонус сегодня. Следующий бонус ${info.nextBonusDate}`;
+                msgDiv.textContent = 'Вы уже получали бонус сегодня. Следующий бонус — завтра!';
+            }
+        }
+
+        // Обновить данные пользователя из бота
+        function updateUserData(data) {
+            if (data.balance !== undefined) {
+                updateBalanceDisplay(data.balance);
+            }
+            if (data.system_id) {
+                systemId = data.system_id;
+                document.getElementById('userSystemId').textContent = data.system_id;
+            }
+            if (data.username) {
+                document.getElementById('userUsername').textContent = '@' + data.username;
+            }
+            if (data.join_date) {
+                document.getElementById('userJoinDate').textContent = data.join_date;
+            }
+            if (data.games_played !== undefined) {
+                document.getElementById('userGamesPlayed').textContent = data.games_played;
+            }
+            if (data.total_earned !== undefined) {
+                document.getElementById('userTotalEarned').textContent = data.total_earned;
             }
         }
 
@@ -465,6 +464,7 @@
             errorDiv.style.color = '#721c24';
             errorDiv.style.borderRadius = '12px';
             errorDiv.style.textAlign = 'center';
+            errorDiv.style.maxWidth = '300px';
             errorDiv.textContent = message;
             document.body.appendChild(errorDiv);
         }
@@ -482,53 +482,42 @@
         tg.onEvent('sendData', function(data) {
             try {
                 const response = JSON.parse(data);
-                console.log('Response:', response);
+                console.log('Response from bot:', response);
                 
                 if (response.action === 'user_data') {
-                    updateBalanceDisplay(response.balance);
-                    if (response.games_played) {
-                        document.getElementById('gamesPlayed').textContent = response.games_played;
-                    }
-                    if (response.total_earned) {
-                        document.getElementById('totalEarned').textContent = response.total_earned;
-                    }
+                    // Данные пользователя из бота
+                    updateUserData(response.data);
+                    showMainMenu();
                 }
                 else if (response.action === 'bonus_info') {
-                    updateBonusInfo(response.data);
+                    // Информация о бонусе
+                    updateBonusInfo(response.can_claim);
                 }
                 else if (response.action === 'bonus_claimed') {
+                    // Бонус успешно получен
                     updateBalanceDisplay(response.new_balance);
                     
                     const msgDiv = document.getElementById('bonusMessage');
                     msgDiv.classList.remove('hidden');
                     msgDiv.classList.add('success');
-                    msgDiv.textContent = `🎉 Вы получили ${response.amount} коинов!`;
+                    msgDiv.textContent = `🎉 Вы получили бонус!`;
                     
-                    updateBonusInfo({
-                        canClaim: false,
-                        nextBonusDate: 'завтра'
-                    });
+                    updateBonusInfo(false);
                 }
                 else if (response.action === 'bonus_error') {
+                    // Ошибка получения бонуса
                     const msgDiv = document.getElementById('bonusMessage');
                     msgDiv.classList.remove('hidden');
                     msgDiv.classList.add('error');
                     msgDiv.textContent = response.message;
+                    
+                    document.getElementById('claimBonusBtn').disabled = false;
+                    document.getElementById('claimBonusBtn').textContent = 'Забрать бонус';
                 }
             } catch (e) {
                 console.error('Error parsing response:', e);
             }
         });
-
-        // Таймаут на случай если бот не отвечает
-        setTimeout(() => {
-            if (document.getElementById('loadingScreen').classList.contains('hidden') === false) {
-                showMainMenu();
-                updateBalanceDisplay(10000);
-                document.getElementById('gamesPlayed').textContent = '0';
-                document.getElementById('totalEarned').textContent = '0';
-            }
-        }, 3000);
     </script>
 </body>
 </html>
